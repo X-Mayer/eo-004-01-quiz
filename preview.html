@@ -138,7 +138,9 @@
   footer{margin-top:22px;text-align:center;color:var(--muted);font-size:13px;line-height:1.5}
 
   /* study sheets */
-  .study-h3{font-family:var(--disp);font-size:20px;letter-spacing:.02em;text-transform:uppercase;margin:26px 0 10px;color:var(--navy)}
+  .study-sec-head{margin:32px 0 14px;padding-bottom:10px;border-bottom:2px solid var(--navy)}
+  .study-sec-head h3{font-family:var(--disp);font-size:24px;letter-spacing:.02em;text-transform:uppercase;margin:0;color:var(--navy)}
+  .study-sec-head span{display:block;color:var(--muted);font-size:15px;margin-top:2px}
   .study-topic{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 12px}
   .study-topic h4{font-family:var(--disp);font-size:18px;letter-spacing:.02em;text-transform:uppercase;margin:0 0 8px;color:var(--navy)}
   .study-topic p{font-size:15.5px;line-height:1.55;margin:0 0 8px}
@@ -503,6 +505,14 @@ function studyCount(s){
   BANK.forEach(function(x){ if(x.s===s) n++; });
   return n;
 }
+function studyTopic(s,l){
+  if(s==="Call signs") return l==="fr"?"Indicatifs du régiment et de la batterie":"Regiment and battery call signs";
+  return SEC_TOPIC[s==="Fire Discipline"?"FD":s][l];
+}
+function studyHead(s,l){
+  var label = s==="Fire Discipline" ? (l==="fr"?"Discipline de tir":"Fire Discipline") : (s==="Call signs" ? (l==="fr"?"Indicatifs d'appel":"Call signs") : s);
+  return '<div class="study-sec-head"><h3>'+esc(label)+'</h3><span>'+esc(studyTopic(s,l))+'</span></div>';
+}
 function renderStudy(){
   var l=state.lang, body=document.getElementById("study-body");
   var h="";
@@ -511,7 +521,7 @@ function renderStudy(){
   h+='<p class="group-label">'+(l==="fr"?"Choisis quoi étudier":"Pick what to study")+'</p>';
   STUDY_SECTIONS.forEach(function(s){
     var label = s==="Fire Discipline" ? (l==="fr"?"Discipline de tir":"Fire Discipline") : (s==="Call signs" ? (l==="fr"?"Indicatifs d'appel":"Call signs") : s);
-    var topic = s==="Call signs" ? (l==="fr"?"Indicatifs du régiment et de la batterie":"Regiment and battery call signs") : SEC_TOPIC[s==="Fire Discipline"?"FD":s][l];
+    var topic = studyTopic(s,l);
     h+='<label class="sec-item'+(studySel[s]?" on":"")+'"><input type="checkbox" data-study-sec="'+s+'"'+(studySel[s]?" checked":"")+'><span><span class="sec-name">'+esc(label)+'</span><span class="sec-topic">'+esc(topic)+'</span></span><span class="sec-count">'+studyCount(s)+'</span></label>';
   });
   h+='<div id="study-content"></div>';
@@ -534,7 +544,7 @@ function renderStudyContent(){
   STUDY_SECTIONS.forEach(function(s){
     if(!studySel[s]) return;
     if(s==="Call signs"){
-      h+='<h3 class="study-h3">'+(l==="fr"?"Indicatifs d'appel":"Call signs")+'</h3>';
+      h+=studyHead(s,l);
       h+='<table class="study-table"><thead><tr><th>'+(l==="fr"?"Indicatif":"Call sign")+'</th><th>'+(l==="fr"?"Signification":"Meaning")+'</th></tr></thead><tbody>';
       CALLSIGNS.forEach(function(cs){
         h+='<tr><td>'+esc(cs.cs)+'</td><td>'+esc(l==="fr"?cs.fr:cs.en)+'</td></tr>';
@@ -543,7 +553,7 @@ function renderStudyContent(){
       return;
     }
     if(s==="Fire Discipline"){
-      h+='<h3 class="study-h3">'+(l==="fr"?"Discipline de tir":"Fire Discipline")+'</h3>';
+      h+=studyHead(s,l);
       STUDY_TOPICS.forEach(function(t){
         h+='<div class="study-topic"><h4>'+esc(l==="fr"?t.t_fr:t.t_en)+'</h4>';
         t.items.forEach(function(x){
@@ -575,7 +585,7 @@ function renderStudyContent(){
       });
       return;
     }
-    h+='<h3 class="study-h3">'+esc(s)+'</h3>';
+    h+=studyHead(s,l);
     BANK.forEach(function(x){
       if(x.s!==s) return;
       h+='<div class="study-point"><span class="study-id">'+x.id+'</span>'+esc(l==="fr"?x.e_fr:x.e_en)+'</div>';
