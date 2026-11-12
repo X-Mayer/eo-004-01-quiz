@@ -511,7 +511,8 @@ function renderStudy(){
   h+='<p class="group-label">'+(l==="fr"?"Choisis quoi étudier":"Pick what to study")+'</p>';
   STUDY_SECTIONS.forEach(function(s){
     var label = s==="Fire Discipline" ? (l==="fr"?"Discipline de tir":"Fire Discipline") : (s==="Call signs" ? (l==="fr"?"Indicatifs d'appel":"Call signs") : s);
-    h+='<label class="sec-item'+(studySel[s]?" on":"")+'"><input type="checkbox" data-study-sec="'+s+'"'+(studySel[s]?" checked":"")+'><span><span class="sec-name">'+esc(label)+'</span></span><span class="sec-count">'+studyCount(s)+'</span></label>';
+    var topic = s==="Call signs" ? (l==="fr"?"Indicatifs du régiment et de la batterie":"Regiment and battery call signs") : SEC_TOPIC[s==="Fire Discipline"?"FD":s][l];
+    h+='<label class="sec-item'+(studySel[s]?" on":"")+'"><input type="checkbox" data-study-sec="'+s+'"'+(studySel[s]?" checked":"")+'><span><span class="sec-name">'+esc(label)+'</span><span class="sec-topic">'+esc(topic)+'</span></span><span class="sec-count">'+studyCount(s)+'</span></label>';
   });
   h+='<div id="study-content"></div>';
   h+='<button class="btn btn-primary" type="button" onclick="show(\'view-start\')">← '+(l==="fr"?"Retour":"Back")+'</button>';
@@ -539,7 +540,6 @@ function renderStudyContent(){
         h+='<tr><td>'+esc(cs.cs)+'</td><td>'+esc(l==="fr"?cs.fr:cs.en)+'</td></tr>';
       });
       h+='</tbody></table>';
-      h+='<div class="study-note">⚠️ '+(l==="fr"?"Table tirée de tes notes (photo du 12 nov.). Vérifie que tout est bon avant de l'étudier.":"Table from your notes (photo, Nov 12). Check everything is right before studying it.")+'</div>';
       return;
     }
     if(s==="Fire Discipline"){
